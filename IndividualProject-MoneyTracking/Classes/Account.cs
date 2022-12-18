@@ -69,9 +69,9 @@ namespace IndividualProject_MoneyTracking.Classes
             ItemType = itemType;
         }
 
-        public void AddAnItem()
+        public void ChooseTypeOfItemToAdd()  // Choose the type of item to add
         {
-            string typeOfAsset = "";
+         
             string choice = "";
             while (true)
             {
@@ -86,7 +86,7 @@ namespace IndividualProject_MoneyTracking.Classes
                 if (choice == "1" || choice == "2")
                 {
                     AddItemBody(choice);
-                    printTextMsg("\nYour item has been added succesfully", ConsoleColor.Green);
+                    PrintTextMsg("\nYour item has been added succesfully", ConsoleColor.Green);
                 }
                 else if (choice == "3")
                 {
@@ -94,7 +94,7 @@ namespace IndividualProject_MoneyTracking.Classes
                 }
                 else
                 {
-                    printTextMsg("Please only enter one of the available options", ConsoleColor.Red);
+                    PrintTextMsg("Please only enter one of the available options", ConsoleColor.Red);
                 }
 
             }
@@ -102,7 +102,7 @@ namespace IndividualProject_MoneyTracking.Classes
 
         }
 
-        public void AddItemBody(string choice)
+        public void AddItemBody(string choice) //Add the items to the account list.
         {
 
             while (true)
@@ -110,20 +110,21 @@ namespace IndividualProject_MoneyTracking.Classes
                 double amount;
                 Console.Write("Title: ");
                 string title = Console.ReadLine();
-                if(title == "")
+                if (title == "")
                 {
-                    printTextMsg("Title cannot be empty",ConsoleColor.Red);
+                    PrintTextMsg("Title cannot be empty", ConsoleColor.Red);
                     continue;
-                } else if(title.Length > 15)
+                }
+                else if (title.Length > 15)
                 {
-                    printTextMsg("Title cannot be longer than 15 characters", ConsoleColor.Red);
+                    PrintTextMsg("Title cannot be longer than 15 characters", ConsoleColor.Red);
                     continue;
                 }
                 Console.Write("Amount: ");
                 bool doubleTest = double.TryParse(Console.ReadLine(), out amount);
                 if (!doubleTest)
                 {
-                    printTextMsg("Please add a numerical value", ConsoleColor.Red);
+                    PrintTextMsg("Please add a numerical value", ConsoleColor.Red);
                     continue;
                 }
 
@@ -132,7 +133,7 @@ namespace IndividualProject_MoneyTracking.Classes
                 bool dateTest = DateTime.TryParse(Console.ReadLine(), out datePurchased);
                 if (!dateTest)
                 {
-                    printTextMsg("Please enter a correct date", ConsoleColor.Red);
+                    PrintTextMsg("Please enter a correct date", ConsoleColor.Red);
                     continue;
                 }
 
@@ -149,25 +150,48 @@ namespace IndividualProject_MoneyTracking.Classes
 
             }
         }
+        public void CheckEdit()
+            //Function to make sure that user can go back to menu if they changed their mind about wanting to edit/delete
+        {
+            if (!accountList.Any())
+            {
+                PrintTextMsg("You don't have any saved items", ConsoleColor.Red);
+            } else
+            {
+                while (true) { 
+                Console.WriteLine("(1) Edit an item");
+                Console.WriteLine("(2) Go back to the main menu");
+                string choice = Console.ReadLine();
+                if(choice == "1")
+                {
+                    EditItem();
+                } else if(choice == "2")
+                {
+                    break;
+                } else
+                    {
+                        PrintTextMsg("Please only enter an available option", ConsoleColor.Red);
+                    }
+                }
+            }
 
+        }
         public void EditItem()
+        //Function to edit an existing item.
+        //If the list is empty no operations work.
         {
             int choice = 0;
             int indexOfItemToBeEdited = 0;
-            if (!accountList.Any())
-            {
-                printTextMsg("You don't have any saved items", ConsoleColor.Red);
-            }
-            else
-            {
+           
+            
                 while (true)
                 {
 
-                    ChooseEditItem(choice, indexOfItemToBeEdited);
+                    ChooseEditItem(choice, indexOfItemToBeEdited); //Function to choose what specific item to edit
 
 
 
-                    printTextMsg("Your item has been changed", ConsoleColor.Yellow);
+                    PrintTextMsg("Your item has been changed", ConsoleColor.Yellow);
                     Console.WriteLine("\nEnter q to quit | Enter r to restart");
                     string exitChoice = Console.ReadLine();
                     if (exitChoice.Trim().ToLower() == "q")
@@ -180,30 +204,30 @@ namespace IndividualProject_MoneyTracking.Classes
                     }
                     else
                     {
-                        Console.WriteLine("You have entered the wrong command");
+                    PrintTextMsg("You have entered the wrong command", ConsoleColor.Red);
                     }
                 }
-            }
+            
         }
-        public void ChooseEditItem(int choice, int indexOfItemToBeEdited)
+        public void ChooseEditItem(int choice, int indexOfItemToBeEdited) //Function to choose what specific item to edit
         {
             while (true)
             {
                 int Id = 0;
-                printTextMsg("Your current items", ConsoleColor.Yellow);
-                Console.WriteLine("Id ".PadRight(5) + "Title".PadRight(10) + "Amount".PadRight(10) + "Month".PadRight(13) + "Item type");
-                for (int i = 0; i < accountList.Count; i++)
-                {
-                    Id = i + 1;
 
-                    DisplayCardWithId(accountList[i].Title, accountList[i].amount, accountList[i].Month, accountList[i].ItemType, Id);
-                }
-                Console.Write("Enter the number of the item you wish to edit: ");
-                choice = int.Parse(Console.ReadLine());
-                indexOfItemToBeEdited = choice - 1;
-                if (choice > accountList.Count)
+                PrintTextMsg("Your current items: ", ConsoleColor.Yellow);
+                PrintItemsWithForLoop(Id);
+                Console.Write("\nNumber of the item you wish to edit: ");
+                bool test = int.TryParse(Console.ReadLine(), out choice);
+                if (!test)
                 {
-                    printTextMsg($"Please only choose one of the {accountList.Count} options \n", ConsoleColor.Red);
+                    PrintTextMsg("Please only enter one of the numbers", ConsoleColor.Red);
+                    continue;
+                }
+                indexOfItemToBeEdited = choice - 1;
+                if (choice > accountList.Count) //Check if user inupt is higher than avaliable options.
+                {
+                    PrintTextMsg($"Please only choose one of the {accountList.Count} options \n", ConsoleColor.Red);
                     continue;
                 }
                 else
@@ -214,7 +238,7 @@ namespace IndividualProject_MoneyTracking.Classes
             }
             EditItemBody(indexOfItemToBeEdited);
         }
-        public void EditItemBody(int indexOfItemToBeEdited)
+        public void EditItemBody(int indexOfItemToBeEdited) //To get the new values to be added to the chosen item in the list
         {
 
             while (true)
@@ -226,7 +250,7 @@ namespace IndividualProject_MoneyTracking.Classes
                 bool doubleTest = double.TryParse(Console.ReadLine(), out amount);
                 if (!doubleTest)
                 {
-                    printTextMsg("Please enter a numerical value", ConsoleColor.Red);
+                    PrintTextMsg("Please enter a numerical value", ConsoleColor.Red);
                     continue;
                 }
 
@@ -235,7 +259,7 @@ namespace IndividualProject_MoneyTracking.Classes
                 bool dateTest = DateTime.TryParse(Console.ReadLine(), out month);
                 if (!dateTest)
                 {
-                    printTextMsg("Please enter a correct date", ConsoleColor.Red);
+                    PrintTextMsg("Please enter a correct date", ConsoleColor.Red);
                     continue;
                 }
 
@@ -250,54 +274,90 @@ namespace IndividualProject_MoneyTracking.Classes
                     accountList[indexOfItemToBeEdited] = new ExpenseItem(title, month, amount, ItemType = "Expense");
                     break;
                 }
+                /*
+                 Switch the existing item with the new one by using the index of the old item.
+                 */
             }
         }
-        public void printTextMsg(string text, ConsoleColor color)
+        public void PrintItemsWithForLoop(int Id)
+        {
+            Console.WriteLine("Id ".PadRight(5) + "Title".PadRight(16) + "Amount".PadRight(16) + "Month".PadRight(19) + "Item type");
+            for (int i = 0; i < accountList.Count; i++) //Loop out the items in the list and show them to the user
+            {
+                Id = i + 1;
+
+                DisplayCardWithId(accountList[i].Title, accountList[i].amount, accountList[i].Month, accountList[i].ItemType, Id);
+            }
+        }
+        public void PrintTextMsg(string text, ConsoleColor color) //Function to print console messages that uses color changes.
         {
             Console.ForegroundColor = color;
             Console.WriteLine(text);
             Console.ResetColor();
         }
-        public void DeleteItem()
+
+
+        public void CheckDelete()
+        //Function to make sure that user can go back to menu if they changed their mind about wanting to edit/delete
         {
+
             if (!accountList.Any())
             {
-                printTextMsg("You don't have any saved items", ConsoleColor.Red);
-            }
-            else
+                PrintTextMsg("You don't have any saved items", ConsoleColor.Red);
+            } else
             {
-                int Id = 0;
-                int choice = 0;
-                Console.WriteLine("Your items: \n");
-                Console.WriteLine("Id ".PadRight(5) + "Title".PadRight(10) + "Amount".PadRight(10) + "Month".PadRight(13) + "Item type");
-                for (int i = 0; i < accountList.Count; i++)
-                {
-                    Id = i + 1;
-
-                    DisplayCardWithId(accountList[i].Title, accountList[i].amount, accountList[i].Month, accountList[i].ItemType, Id);
-                }
                 while (true)
                 {
-                    Console.WriteLine("Choose the number of the item you wish to delete: ");
-                    bool test = int.TryParse(Console.ReadLine(), out choice);
-                    if (choice > accountList.Count)
+                    Console.WriteLine("(1) Delete an item");
+                    Console.WriteLine("(2) Go back to main menu");
+                    string choice = Console.ReadLine();
 
+                    if (choice == "1")
                     {
-                        printTextMsg($"Please only choose one of the {accountList.Count} options \n", ConsoleColor.Red);
-
+                        DeleteItem();
                     }
-                    else
+                    else if (choice.Trim() == "2")
                     {
                         break;
+                    } else
+                    {
+                        PrintTextMsg("Please only enter an available option", ConsoleColor.Red);
                     }
                 }
-
-
-                accountList.RemoveAt(choice - 1);
-
-                printTextMsg("Your items have been deleted succesfully", ConsoleColor.Green);
-
+             
             }
+        }
+
+        public void DeleteItem()
+        //This function delets a singluar item in the list. 
+        //If the list is empty no operations work.
+        {
+
+            int Id = 0;
+            int choice = 0;
+            Console.WriteLine("Your items: \n");
+            PrintItemsWithForLoop(Id);
+            while (true)
+            {
+                Console.Write("\nNumber of the item you wish to delete: ");
+                bool test = int.TryParse(Console.ReadLine(), out choice);
+                if (choice > accountList.Count)
+
+                {
+                    PrintTextMsg($"Please only choose one of the {accountList.Count} options \n", ConsoleColor.Red);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+
+            accountList.RemoveAt(choice - 1); //Based on the index of the selected item we delete the item from the list.
+
+            PrintTextMsg("Your items have been deleted succesfully", ConsoleColor.Green);
+
+
 
 
 
@@ -306,10 +366,13 @@ namespace IndividualProject_MoneyTracking.Classes
 
 
         public void SaveItemsToFile()
+        //The function takes the list and json serializes it using a json library
+        // The jsonstring then gets added to a text file which gets saved in a directory
+        //If the list is empty no operations work.
         {
             if (!accountList.Any())
             {
-                printTextMsg("You don't have any saved items", ConsoleColor.Red);
+                PrintTextMsg("You don't have any saved items", ConsoleColor.Red);
             }
             else
             {
@@ -322,7 +385,7 @@ namespace IndividualProject_MoneyTracking.Classes
                     Directory.CreateDirectory(folderPath);
                 }
 
-                printTextMsg("Your items have been saved", ConsoleColor.Green);
+                PrintTextMsg("Your items have been saved", ConsoleColor.Green);
 
                 File.WriteAllText(filePath, jsonString);
             }
@@ -331,6 +394,9 @@ namespace IndividualProject_MoneyTracking.Classes
         }
 
         public void LoadItemsFromFile()
+        //Function loads items from a text file 
+        //If the list is empty no operations work.
+        //The function deserilalizes the jsonstring in the file and then adds the values back into the account list.
         {
 
             string fullPath = $"{folderPath}{fileName}";
@@ -347,18 +413,19 @@ namespace IndividualProject_MoneyTracking.Classes
 
 
 
-                printTextMsg("Your items have been loaded!", ConsoleColor.Green);
+                PrintTextMsg("Your items have been loaded!", ConsoleColor.Green);
 
             }
             else
             {
-                printTextMsg("File does not exist", ConsoleColor.Red);
+                PrintTextMsg("File does not exist", ConsoleColor.Red);
             }
 
 
 
         }
         public double CalculateBalance()
+        //Function to calculate the current balance based on the expenses and incomes
         {
             var incomeList = accountList.OfType<IncomeItem>().ToList();
             var expenseList = accountList.OfType<ExpenseItem>().ToList();
@@ -372,11 +439,14 @@ namespace IndividualProject_MoneyTracking.Classes
         }
 
         public void ChooseItemsToDisplay()
+        //Choose the items to be displayed
+        //If the account list is empty no operation will happen.
+
         {
             string choice = "";
             if (!accountList.Any())
             {
-                printTextMsg("You don't have any saved items", ConsoleColor.Red);
+                PrintTextMsg("You don't have any saved items", ConsoleColor.Red);
             }
             else
             {
@@ -392,7 +462,7 @@ namespace IndividualProject_MoneyTracking.Classes
 
                     if (!(choice == "1" || choice == "2" || choice == "3" || choice == "4"))
                     {
-                        printTextMsg("Wrong input", ConsoleColor.Red);
+                        PrintTextMsg("Wrong input", ConsoleColor.Red);
                         continue;
                     }
                     else if (choice == "4")
@@ -413,6 +483,7 @@ namespace IndividualProject_MoneyTracking.Classes
             }
         }
         public void ChooseSorting(string choice)
+        //Choose the way of sorting the items to be displayed with a switch case and a readline
         {
 
             string sortChoice = "";
@@ -429,7 +500,7 @@ namespace IndividualProject_MoneyTracking.Classes
                 sortChoice = Console.ReadLine();
                 if (!(sortChoice == "1" || sortChoice == "2" || sortChoice == "3" || sortChoice == "4" || sortChoice == "5" || sortChoice == "6"))
                 {
-                    printTextMsg("Please only choose one of the 6 options\n", ConsoleColor.Red);
+                    PrintTextMsg("Please only choose one of the 6 options\n", ConsoleColor.Red);
                 }
                 else
                 {
@@ -467,6 +538,7 @@ namespace IndividualProject_MoneyTracking.Classes
 
 
         public void DisplayItems(string choice, string sortChoice, List<Account> sortedList)
+        //Display the items using the previous choice the user did
         {
             while (true)
             {
@@ -507,12 +579,13 @@ namespace IndividualProject_MoneyTracking.Classes
                 }
                 else
                 {
-                    printTextMsg("You have entered the wrong command", ConsoleColor.Red);
+                    PrintTextMsg("You have entered the wrong command", ConsoleColor.Red);
                 }
             }
         }
         public void DisplayCard(string title, double amount, DateTime month, string itemType, ConsoleColor color)
-
+        //Function to display the items for the normal display items function.
+        //Based on the type of item the text color is either blue or cyan.
         {
             if (itemType == "Expense")
             {
@@ -529,18 +602,20 @@ namespace IndividualProject_MoneyTracking.Classes
 
         }
         public void DisplayCardWithId(string title, double amount, DateTime month, string itemType, int Id)
+        //Function to display the list items with id included for edit and delete functionality
+        //Based on type of item the text gets either a blue or cyan color.
 
         {
             if (itemType == "Expense")
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"{Id.ToString().PadRight(5)}{title.PadRight(10)}{amount.ToString().PadRight(10)}{month.ToString("MMMM").PadRight(13)}{itemType.PadRight(10)}");
+                Console.WriteLine($"{Id.ToString().PadRight(5)}{title.PadRight(16)}{amount.ToString().PadRight(16)}{month.ToString("MMMM").PadRight(19)}{itemType.PadRight(16)}");
                 Console.ResetColor();
             }
             else if (itemType == "Income")
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"{Id.ToString().PadRight(5)}{title.PadRight(10)}{amount.ToString().PadRight(10)}{month.ToString("MMMM").PadRight(13)}{itemType.PadRight(10)}");
+                Console.WriteLine($"{Id.ToString().PadRight(5)}{title.PadRight(16)}{amount.ToString().PadRight(16)}{month.ToString("MMMM").PadRight(19)}{itemType.PadRight(16)}");
                 Console.ResetColor();
             }
 

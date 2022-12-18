@@ -28,6 +28,7 @@ do
     Console.WriteLine("(5) Save your items");
     Console.WriteLine("(6) Load your items");
     Console.WriteLine("(7) Quit the application");
+    Console.Write("Your choice: ");
     option = Console.ReadLine();    
     
     switch (option)
@@ -36,13 +37,13 @@ do
             account.ChooseItemsToDisplay(); // This function starts the process to view your items
             break;
         case "2":    
-            account.AddAnItem(); //Function to add items to the list
+            account.ChooseTypeOfItemToAdd(); //Function to add items to the list
             break;
         case "3":
-            account.EditItem();//Function to edit existing items in the list
+            account.CheckEdit();//Function to edit existing items in the list
             break;
         case "4":
-            account.DeleteItem(); //Function to delete existing items in the list
+            account.CheckDelete(); //Function to delete existing items in the list
             break;
         case "5":
             account.SaveItemsToFile(); //Function to save existing items in the list to a text file
@@ -54,7 +55,7 @@ do
             Console.WriteLine("Quit"); //Quit the application
             break;
         default:
-            Console.WriteLine("Please enter a valid number");
+            account.PrintTextMsg("Please enter a valid option",ConsoleColor.Red);
             break;
     }
 
