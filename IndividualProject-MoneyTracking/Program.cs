@@ -6,19 +6,20 @@ using System.Linq;
 
 Console.WriteLine("Welcome to TrackMoney");
 Account account = new Account();
-account.LoadItemsFromFile();
-//account.accountList.Add(new IncomeItem("Aalary", new DateTime(2001,02,13), 1));  //Added items for testing purposes
-//account.accountList.Add(new IncomeItem("qalary", new DateTime(2001, 02, 13), 3));  //Added items for testing purposes
-//account.accountList.Add(new ExpenseItem("Aar payment", new DateTime(2001, 02, 13), 2));//Added items for testing purposes 
-//account.accountList.Add(new ExpenseItem("qaar payment", new DateTime(2001, 02, 13), 4));//Added items for testing purposes 
 
-Console.WriteLine($"Your current balance is {account.CalculateBalance()}\n");
+account.accountList.Add(new IncomeItem("Salary", new DateTime(2001,02,13),25000,"Income"));  //Added items for testing purposes
+account.accountList.Add(new IncomeItem("Swish payment", new DateTime(2001,02,13), 250,"Income"));  //Added items for testing purposes
+account.accountList.Add(new ExpenseItem("Car payment", new DateTime(2001,02,13), 1000,"Expense"));//Added items for testing purposes 
+account.accountList.Add(new ExpenseItem("Groceries", new DateTime(2001,02,13), 1568, "Expense"));//Added items for testing purposes 
+
+
+
 
 
 string option = "";
 do
 {
-  
+    Console.WriteLine($"Your current balance is {account.CalculateBalance()}\n");
     Console.WriteLine("Select one of the following options \n");
     Console.WriteLine("(1) Show items All/Expenses/Incomes ");
     Console.WriteLine("(2) Add a new item  Expense/Income");
@@ -32,25 +33,25 @@ do
     switch (option)
     {
         case "1":
-            account.ChooseItemsToDisplay();
+            account.ChooseItemsToDisplay(); // This function starts the process to view your items
             break;
         case "2":    
-            account.AddAnItem();
+            account.AddAnItem(); //Function to add items to the list
             break;
         case "3":
-            account.EditItem();
+            account.EditItem();//Function to edit existing items in the list
             break;
         case "4":
-            account.DeleteItem();
+            account.DeleteItem(); //Function to delete existing items in the list
             break;
         case "5":
-            account.SaveItemsToFile();
-             break;
+            account.SaveItemsToFile(); //Function to save existing items in the list to a text file
+            break;
         case "6":
-            account.LoadItemsFromFile();
+            account.LoadItemsFromFile();//Function to load existing from a text file
             break;
         case "7":
-            Console.WriteLine("Quit");
+            Console.WriteLine("Quit"); //Quit the application
             break;
         default:
             Console.WriteLine("Please enter a valid number");
