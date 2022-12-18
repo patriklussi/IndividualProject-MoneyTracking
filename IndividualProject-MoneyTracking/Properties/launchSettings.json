@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "IndividualProject-MoneyTracking": {
+      "commandName": "Project"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    }
+  }
+}
