@@ -94,7 +94,7 @@ namespace IndividualProject_MoneyTracking.Classes
                 }
                 else
                 {
-                    PrintTextMsg("Please only enter one of the available options", ConsoleColor.Red);
+                    PrintTextMsg("Please enter a valid option", ConsoleColor.Red);
                 }
 
             }
@@ -170,7 +170,7 @@ namespace IndividualProject_MoneyTracking.Classes
                     break;
                 } else
                     {
-                        PrintTextMsg("Please only enter an available option", ConsoleColor.Red);
+                        PrintTextMsg("Please enter a valid option", ConsoleColor.Red);
                     }
                 }
             }
@@ -188,9 +188,6 @@ namespace IndividualProject_MoneyTracking.Classes
                 {
 
                     ChooseEditItem(choice, indexOfItemToBeEdited); //Function to choose what specific item to edit
-
-
-
                     PrintTextMsg("Your item has been changed", ConsoleColor.Yellow);
                     Console.WriteLine("\nEnter q to quit | Enter r to restart");
                     string exitChoice = Console.ReadLine();
@@ -259,7 +256,7 @@ namespace IndividualProject_MoneyTracking.Classes
                 bool dateTest = DateTime.TryParse(Console.ReadLine(), out month);
                 if (!dateTest)
                 {
-                    PrintTextMsg("Please enter a correct date", ConsoleColor.Red);
+                    PrintTextMsg("Please enter a valid date", ConsoleColor.Red);
                     continue;
                 }
 
@@ -321,7 +318,7 @@ namespace IndividualProject_MoneyTracking.Classes
                         break;
                     } else
                     {
-                        PrintTextMsg("Please only enter an available option", ConsoleColor.Red);
+                        PrintTextMsg("Please enter a valid option", ConsoleColor.Red);
                     }
                 }
              
@@ -332,50 +329,47 @@ namespace IndividualProject_MoneyTracking.Classes
         //This function delets a singluar item in the list. 
         //If the list is empty no operations work.
         {
-
-            int Id = 0;
-            int choice = 0;
-            Console.WriteLine("Your items: \n");
-            PrintItemsWithForLoop(Id);
-            while (true)
+            if (!accountList.Any())
             {
-                Console.Write("\nNumber of the item you wish to delete: ");
-                bool test = int.TryParse(Console.ReadLine(), out choice);
-                if (choice > accountList.Count)
+                PrintTextMsg("You don't have any saved items", ConsoleColor.Red);
+            } else
+            {
+                int Id = 0;
+                int choice = 0;
+                Console.WriteLine("Your items: \n");
+                PrintItemsWithForLoop(Id);
+                while (true)
+                {
+                    Console.Write("\nNumber of the item you wish to delete: ");
+                    bool test = int.TryParse(Console.ReadLine(), out choice);
+                    if (choice > accountList.Count)
 
-                {
-                    PrintTextMsg($"Please only choose one of the {accountList.Count} options \n", ConsoleColor.Red);
+                    {
+                        PrintTextMsg($"Please only choose one of the {accountList.Count} options \n", ConsoleColor.Red);
+                    }
+                    else if(!test)
+                    {
+                        PrintTextMsg("Please input a valid number",ConsoleColor.Red);
+                    } else
+                    {
+                        break;
+                    }
                 }
-                else
-                {
-                    break;
-                }
+
+
+                accountList.RemoveAt(choice - 1); //Based on the index of the selected item we delete the item from the list.
+
+                PrintTextMsg("Your items have been deleted succesfully", ConsoleColor.Green);
             }
-
-
-            accountList.RemoveAt(choice - 1); //Based on the index of the selected item we delete the item from the list.
-
-            PrintTextMsg("Your items have been deleted succesfully", ConsoleColor.Green);
-
-
-
-
-
-
+           
         }
 
 
         public void SaveItemsToFile()
         //The function takes the list and json serializes it using a json library
         // The jsonstring then gets added to a text file which gets saved in a directory
-        //If the list is empty no operations work.
+      
         {
-            if (!accountList.Any())
-            {
-                PrintTextMsg("You don't have any saved items", ConsoleColor.Red);
-            }
-            else
-            {
                 string filePath = $"{folderPath}{fileName}";
                 JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
                 string jsonString = JsonConvert.SerializeObject(accountList, settings);
@@ -388,9 +382,6 @@ namespace IndividualProject_MoneyTracking.Classes
                 PrintTextMsg("Your items have been saved", ConsoleColor.Green);
 
                 File.WriteAllText(filePath, jsonString);
-            }
-
-
         }
 
         public void LoadItemsFromFile()
